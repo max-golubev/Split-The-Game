@@ -1,4 +1,5 @@
 import enum
+import Board
 
 
 class Direction(enum.Enum):
@@ -9,8 +10,8 @@ class Direction(enum.Enum):
 
 
 class BigCell:
-    max_x = 2 #TODO
-    max_y = 2 #TODO
+    max_x = Board.Board.columns
+    max_y = Board.Board.rows
 
     def __init__(self, x, y):
         self.x = x
