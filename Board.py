@@ -4,8 +4,8 @@ from BigCell import *
 class Board:
     def __init__(self, width, height):
         self.current_player = PLAYER_1
-        self.columns = width
-        self.rows = height
+        self.columns = width  # in-game x
+        self.rows = height  # in-game y
         self.cells = width * [None]
         for x in range(0, width):
             column = height * [None]
@@ -21,9 +21,9 @@ class Board:
         return self.get_current_player()
 
     def perform_turn(self, cell: BigCell, direction: Direction):
-        if cell.get_cell_owner(direction) == NOONE:
-            if cell.get_owner() == self.current_player or cell.get_owner() == NOONE:
-                cell.set_cell_owner(direction, self.current_player)
+        if cell.get_small_cell_owner(direction) == NOONE:
+            if cell.get_big_cell_owner() == self.current_player or cell.get_big_cell_owner() == NOONE:
+                cell.set_small_cell_owner(direction, self.current_player)
                 if cell.is_full():
                     self.explode(cell)
                 return True
@@ -46,13 +46,13 @@ class Board:
         x = cell.get_x()
         y = cell.get_y()
         if cell.has_top():
-            result[Direction.TOP] = self.get_cell(x, y - 1)
+            result[Direction.TOP] = self.get_big_cell(x, y - 1)
         if cell.has_right():
-            result[Direction.RIGHT] = self.get_cell(x + 1, y)
+            result[Direction.RIGHT] = self.get_big_cell(x + 1, y)
         if cell.has_bottom():
-            result[Direction.BOTTOM] = self.get_cell(x, y + 1)
+            result[Direction.BOTTOM] = self.get_big_cell(x, y + 1)
         if cell.has_left():
-            result[Direction.LEFT] = self.get_cell(x - 1, y)
+            result[Direction.LEFT] = self.get_big_cell(x - 1, y)
         return result
 
     def compute_next_player(self):
@@ -66,13 +66,13 @@ class Board:
         else:
             raise "Unknown player: " + repr(current)
 
-    def get_cell(self, col, row) -> BigCell:
+    def get_big_cell(self, col, row) -> BigCell:
         return self.cells[col][row]
 
-    def get_columns(self):
+    def get_columns_number(self):
         return self.columns
 
-    def get_rows(self):
+    def get_rows_number(self):
         return self.rows
 
     def has_won(self):
@@ -80,9 +80,9 @@ class Board:
         for x in range(0, self.columns):
             for y in range(0, self.rows):
                 if winner == NOONE:
-                    winner = Board.get_cell(self, x, y).get_owner()
+                    winner = Board.get_big_cell(self, x, y).get_big_cell_owner()
                     continue
-                contestant = Board.get_cell(self, x, y).get_owner()
+                contestant = Board.get_big_cell(self, x, y).get_big_cell_owner()
                 if winner != contestant and contestant != -1:
                     return False, NOONE
         return True, winner

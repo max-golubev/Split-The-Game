@@ -34,6 +34,7 @@ class Direction(Enum):
             return Direction.RIGHT
         return Direction.OUTSIDE
 
+
 class BigCell:
 
     def __init__(self, x, y, width, height):
@@ -55,11 +56,11 @@ class BigCell:
     def get_y(self):
         return self.y
 
-    def get_owner(self):
+    def get_big_cell_owner(self):
         for next in Direction:
             if next == Direction.OUTSIDE:
                 continue
-            cell_owner = self.get_cell_owner(next)
+            cell_owner = self.get_small_cell_owner(next)
             if cell_owner != NOONE:
                 return cell_owner
         return NOONE
@@ -68,7 +69,7 @@ class BigCell:
         for next in Direction:
             if next == Direction.OUTSIDE:
                 continue
-            self.set_cell_owner(next, NOONE)
+            self.set_small_cell_owner(next, NOONE)
 
     def capture(self, player, capturing: Direction, captured_cell):
         empty_directions = []
@@ -78,17 +79,16 @@ class BigCell:
                 continue
             elif not self.has_small_cell(next):
                 continue
-            elif self.get_cell_owner(next) != NOONE:
-                self.set_cell_owner(next, player)
+            elif self.get_small_cell_owner(next) != NOONE:
+                self.set_small_cell_owner(next, player)
             else:
                 empty_directions.append(next)
 
-        if self.get_cell_owner(capturing) == NOONE:
-            self.set_cell_owner(capturing, player)
+        if self.get_small_cell_owner(capturing) == NOONE:
+            self.set_small_cell_owner(capturing, player)
         else:
             random_index = random.randint(0, len(empty_directions) - 1)
-            self.set_cell_owner(empty_directions[random_index], player)
-
+            self.set_small_cell_owner(empty_directions[random_index], player)
 
     def is_full(self):
         for next in Direction:
@@ -96,15 +96,14 @@ class BigCell:
                 continue
             if not self.has_small_cell(next):
                 continue
-            if self.get_cell_owner(next) == NOONE:
+            if self.get_small_cell_owner(next) == NOONE:
                 return False
         return True
 
-
-    def get_cell_owner(self, direction):
+    def get_small_cell_owner(self, direction):
         return self.small_cells[direction]
 
-    def set_cell_owner(self, direction, owner):
+    def set_small_cell_owner(self, direction, owner):
         if direction == Direction.OUTSIDE:
             raise ValueError("can't set owner: %d" % owner)
         self.small_cells[direction] = owner
