@@ -128,46 +128,55 @@ class BoardPainter:
                 return cell, dir
         return cell, Direction.OUTSIDE
 
+
+class InitialScreenPainter:
+    def __init__(self, screen, font):
+        self.screen = screen
+        self.font = font
+
     def paint_initial_screen(self):
-        button_top_coordinate = 500
         self.screen.fill(initial_screen_colors["background"])
         font = pygame.font.Font('freesansbold.ttf', 60)
-        text = font.render('The Split', True, initial_screen_colors["title_color"])
-        self.screen.blit(text, (260, 100))
+        title_text = font.render('The Split', True, initial_screen_colors["title_color"])
+        self.screen.blit(title_text, (260, 100))
+
         # button for 2 players
         button_left_coordinate_2 = board_width / 2 - button_height * 2 - button_height
-        
+
         pygame.draw.rect(self.screen, initial_screen_colors["buttons_color"],
                          (button_left_coordinate_2, button_top_coordinate, button_height, button_height))
-        BoardPainter.draw_rect_borders(self, button_top_coordinate, button_left_coordinate_2,
-                                       button_height, button_height, initial_screen_colors["button_border"], 2)
+        InitialScreenPainter.draw_rect_borders(self, button_top_coordinate, button_left_coordinate_2,
+                                               button_height, button_height,
+                                               initial_screen_colors["button_border"], 2)
 
         # button for 3 players
         button_left_coordinate_3 = board_width / 2 - button_height / 2
 
         pygame.draw.rect(self.screen, initial_screen_colors["buttons_color"],
                          (button_left_coordinate_3, button_top_coordinate, button_height, button_height))
-        BoardPainter.draw_rect_borders(self, button_top_coordinate, button_left_coordinate_3,
-                                       button_height, button_height, initial_screen_colors["button_border"], 2)
+        InitialScreenPainter.draw_rect_borders(self, button_top_coordinate, button_left_coordinate_3,
+                                               button_height, button_height,
+                                               initial_screen_colors["button_border"], 2)
 
         # button for 4 players
         button_left_coordinate_4 = board_width / 2 + button_height * 2
 
         pygame.draw.rect(self.screen, initial_screen_colors["buttons_color"],
                          (button_left_coordinate_4, button_top_coordinate, button_height, button_height))
-        BoardPainter.draw_rect_borders(self, button_top_coordinate, button_left_coordinate_4,
-                                       button_height, button_height, initial_screen_colors["button_border"], 2)
+        InitialScreenPainter.draw_rect_borders(self, button_top_coordinate, button_left_coordinate_4,
+                                               button_height, button_height,
+                                               initial_screen_colors["button_border"], 2)
 
     def draw_rect_borders(self, top_y_coordinate, left_x_coordinate, rect_height, rect_width, color, line_width=1):
         # top border
         pygame.draw.line(self.screen, color, (left_x_coordinate - 1, top_y_coordinate - 1),
-                         (left_x_coordinate + rect_width + 1, top_y_coordinate - 1), line_width)
-        # right border
+                         (left_x_coordinate + rect_width + 1, top_y_coordinate - 1), line_width + 1)
+        # left border
         pygame.draw.line(self.screen, color, (left_x_coordinate - 1, top_y_coordinate - 1),
-                         (left_x_coordinate - 1, top_y_coordinate + rect_height + 1), line_width)
+                         (left_x_coordinate - 1, top_y_coordinate + rect_height + 1), line_width + 1)
         # bottom border
         pygame.draw.line(self.screen, color, (left_x_coordinate - 1, top_y_coordinate + rect_height + 1),
                          (left_x_coordinate + rect_width + 1, top_y_coordinate + rect_height + 1), line_width)
-        # left border
+        # right border
         pygame.draw.line(self.screen, color, (left_x_coordinate + rect_width + 1, top_y_coordinate - 1),
                          (left_x_coordinate + rect_width + 1, top_y_coordinate + rect_height + 1), line_width)
