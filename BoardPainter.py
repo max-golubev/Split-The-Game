@@ -2,19 +2,12 @@ import Board
 from BigCell import *
 import pygame
 
-board_height = 800
-board_width = 800
-board_size = (board_height, board_width)
+board_height = 900
+board_width = 900
+BOARD_SIZE = (board_height, board_width)
 
-button_height = 80
-
-border_color = (0, 0, 255)
+cell_border_color = (0, 0, 255)
 cell_color = (100, 100, 100)
-
-initial_screen_colors = {"title_color": (255, 0, 0),
-                         "background": (80, 80, 80),
-                         "buttons_color": (194, 194, 194),
-                         "button_border": (37, 20, 224)}
 
 PLAYER_COLORS = {}
 PLAYER_COLORS[PLAYER_1] = (255, 0, 0)
@@ -23,15 +16,36 @@ PLAYER_COLORS[PLAYER_3] = (0, 0, 255)
 PLAYER_COLORS[PLAYER_4] = (255, 255, 0)
 PLAYER_COLORS[NOONE] = cell_color
 
+button_height = 90
+button_top_coordinate = 500
+
+initial_screen_colors = {"title_color": (255, 0, 0),
+                         "background": (80, 80, 80),
+                         "buttons_color": (194, 194, 194),
+                         "button_border": (37, 20, 224)}
+
 
 class BoardPainter:
-    def __init__(self, big_cell_height_in_pixels, small_cell_height_in_pixels, screen: pygame.Surface,
-                 font: pygame.font.Font):
-        self.big_cell_height = big_cell_height_in_pixels  # size in pixels
-        self.small_cell_height = small_cell_height_in_pixels  # size in pixels
+    def __init__(self, rows_number, columns_number, screen: pygame.Surface, font: pygame.font.Font):
         self.screen = screen
         self.font = font
-        self.x0, self.y0 = 10, 10
+        self.x0 = 10
+        self.y0 = self.x0
+
+        higher_side_count = 0
+        lower_board_length = 0
+        if rows_number >= columns_number:
+            higher_side_count = rows_number
+        else:
+            higher_side_count = columns_number
+        if board_height <= board_width:
+            lower_board_length = board_height
+        else:
+            lower_board_length = board_width
+
+        self.big_cell_height = (lower_board_length - self.x0 * 2) // higher_side_count  # size in pixels
+        self.small_cell_height = self.big_cell_height//3  # size in pixels
+
 
     def draw_board(self, board: Board.Board):
         self.draw_cells(board)
@@ -62,11 +76,11 @@ class BoardPainter:
             top = self.y0
             bottom = self.y0 + height
             xx = self.x0 + self.big_cell_height * col
-            pygame.draw.line(self.screen, border_color, (xx, top), (xx, bottom))
+            pygame.draw.line(self.screen, cell_border_color, (xx, top), (xx, bottom))
 
         for row in range(0, rows + 1):
             yy = self.y0 + self.big_cell_height * row
-            pygame.draw.line(self.screen, border_color, (self.x0, yy), (self.x0 + width, yy))
+            pygame.draw.line(self.screen, cell_border_color, (self.x0, yy), (self.x0 + width, yy))
 
     def draw_current_player(self, board: Board.Board):
         player = board.get_current_player()
@@ -74,7 +88,6 @@ class BoardPainter:
         bottom = self.y0 + self.big_cell_height * board.get_rows_number()
         centre = self.x0 + self.big_cell_height * board.get_columns_number() // 2
         self.screen.blit(text, (centre - text.get_width() // 2, bottom + 10))
-
 
     def get_color(self, cell: BigCell, dir: Direction):
         owner = cell.get_small_cell_owner(dir)

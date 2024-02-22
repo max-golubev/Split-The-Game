@@ -64,7 +64,7 @@ class Board:
             else:
                 return PLAYER_ORDER[index + 1]
         else:
-            raise "Unknown player: " + repr(current)
+            raise ValueError("Unknown player: " + repr(current))
 
     def get_big_cell(self, col, row) -> BigCell:
         return self.cells[col][row]
