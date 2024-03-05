@@ -16,13 +16,25 @@ PLAYER_COLORS[PLAYER_3] = (0, 0, 255)
 PLAYER_COLORS[PLAYER_4] = (255, 255, 0)
 PLAYER_COLORS[NOONE] = cell_color
 
-button_height = 90
-button_top_coordinate = 500
+# player count buttons
+count_button_height = 90
+count_button_width = count_button_height
+count_button_top_coord = 450
+button_left_coordinate_2 = board_width / 2 - count_button_height * 2 - count_button_height
+button_left_coordinate_3 = board_width / 2 - count_button_height / 2
+button_left_coordinate_4 = board_width / 2 + count_button_height * 2
 
-initial_screen_colors = {"title_color": (255, 0, 0),
-                         "background": (80, 80, 80),
+# Initial screen buttons
+play_button_height = 90
+play_button_width = 180
+play_button_top_coord = 300
+play_button_left_coord = (board_width / 2) - (play_button_width / 2)
+
+initial_screen_colors = {"title_color": (2, 205, 212),
+                         "background": (0, 0, 0),
                          "buttons_color": (194, 194, 194),
-                         "button_border": (37, 20, 224)}
+                         "button_border": (37, 20, 224),
+                         "button_text_color": (255, 0, 0)}
 
 
 class BoardPainter:
@@ -44,8 +56,7 @@ class BoardPainter:
             lower_board_length = board_width
 
         self.big_cell_height = (lower_board_length - self.x0 * 2) // higher_side_count  # size in pixels
-        self.small_cell_height = self.big_cell_height//3  # size in pixels
-
+        self.small_cell_height = self.big_cell_height // 3  # size in pixels
 
     def draw_board(self, board: Board.Board):
         self.draw_cells(board)
@@ -135,37 +146,61 @@ class InitialScreenPainter:
         self.font = font
 
     def paint_initial_screen(self):
-        self.screen.fill(initial_screen_colors["background"])
-        font = pygame.font.Font('freesansbold.ttf', 60)
-        title_text = font.render('The Split', True, initial_screen_colors["title_color"])
-        self.screen.blit(title_text, (260, 100))
+        InitialScreenPainter.paint_title(self)
+
+        # play button
+        pygame.draw.rect(self.screen, initial_screen_colors["buttons_color"],
+                         (play_button_left_coord, play_button_top_coord, play_button_width, play_button_height))
+        InitialScreenPainter.draw_rect_borders(self, play_button_top_coord, play_button_left_coord,
+                                               play_button_height, play_button_width,
+                                               initial_screen_colors["button_border"], 2)
+
+        play_text_size = 40
+        font = pygame.font.Font('freesansbold.ttf', play_text_size)
+        play_text = font.render('Play', True, initial_screen_colors["button_text_color"])
+        self.screen.blit(play_text, (board_width / 2 - play_text_size,
+                                     play_button_top_coord + (play_button_height - play_text_size) / 2))
+
+    def player_count_screen(self):
+        InitialScreenPainter.paint_title(self)
+        font = pygame.font.Font('freesansbold.ttf', 40)
+        prompt_text = font.render('Choose number of player:', True, initial_screen_colors["button_text_color"])
+        self.screen.blit(prompt_text, (200, 300))
+
+        button_text_size = 50
 
         # button for 2 players
-        button_left_coordinate_2 = board_width / 2 - button_height * 2 - button_height
-
         pygame.draw.rect(self.screen, initial_screen_colors["buttons_color"],
-                         (button_left_coordinate_2, button_top_coordinate, button_height, button_height))
-        InitialScreenPainter.draw_rect_borders(self, button_top_coordinate, button_left_coordinate_2,
-                                               button_height, button_height,
+                         (button_left_coordinate_2, count_button_top_coord, count_button_height, count_button_height))
+        InitialScreenPainter.draw_rect_borders(self, count_button_top_coord, button_left_coordinate_2,
+                                               count_button_height, count_button_height,
                                                initial_screen_colors["button_border"], 2)
+        font = pygame.font.Font('freesansbold.ttf', button_text_size)
+        text = font.render('2', True, initial_screen_colors["button_text_color"])
+        self.screen.blit(text, (button_left_coordinate_2 + 32,
+                                count_button_top_coord + (count_button_height - button_text_size) / 2 + 3))
 
         # button for 3 players
-        button_left_coordinate_3 = board_width / 2 - button_height / 2
-
         pygame.draw.rect(self.screen, initial_screen_colors["buttons_color"],
-                         (button_left_coordinate_3, button_top_coordinate, button_height, button_height))
-        InitialScreenPainter.draw_rect_borders(self, button_top_coordinate, button_left_coordinate_3,
-                                               button_height, button_height,
+                         (button_left_coordinate_3, count_button_top_coord, count_button_height, count_button_height))
+        InitialScreenPainter.draw_rect_borders(self, count_button_top_coord, button_left_coordinate_3,
+                                               count_button_height, count_button_height,
                                                initial_screen_colors["button_border"], 2)
+        font = pygame.font.Font('freesansbold.ttf', button_text_size)
+        text = font.render('3', True, initial_screen_colors["button_text_color"])
+        self.screen.blit(text, (button_left_coordinate_3 + 32,
+                                count_button_top_coord + (count_button_height - button_text_size) / 2 + 3))
 
         # button for 4 players
-        button_left_coordinate_4 = board_width / 2 + button_height * 2
-
         pygame.draw.rect(self.screen, initial_screen_colors["buttons_color"],
-                         (button_left_coordinate_4, button_top_coordinate, button_height, button_height))
-        InitialScreenPainter.draw_rect_borders(self, button_top_coordinate, button_left_coordinate_4,
-                                               button_height, button_height,
+                         (button_left_coordinate_4, count_button_top_coord, count_button_height, count_button_height))
+        InitialScreenPainter.draw_rect_borders(self, count_button_top_coord, button_left_coordinate_4,
+                                               count_button_height, count_button_height,
                                                initial_screen_colors["button_border"], 2)
+        font = pygame.font.Font('freesansbold.ttf', button_text_size)
+        text = font.render('4', True, initial_screen_colors["button_text_color"])
+        self.screen.blit(text, (button_left_coordinate_4 + 30,
+                                count_button_top_coord + (count_button_height - button_text_size) / 2  + 3))
 
     def draw_rect_borders(self, top_y_coordinate, left_x_coordinate, rect_height, rect_width, color, line_width=1):
         # top border
@@ -180,3 +215,16 @@ class InitialScreenPainter:
         # right border
         pygame.draw.line(self.screen, color, (left_x_coordinate + rect_width + 1, top_y_coordinate - 1),
                          (left_x_coordinate + rect_width + 1, top_y_coordinate + rect_height + 1), line_width)
+
+    def paint_title(self):
+        self.screen.fill(initial_screen_colors["background"])
+        font = pygame.font.Font('freesansbold.ttf', 80)
+        title_text = font.render('The Split', True, initial_screen_colors["title_color"])
+        self.screen.blit(title_text, (260, 100))
+
+
+def is_within(top_y_coordinate, bottom_y_coordinate, left_x_coordinate, right_x_coordinate, x, y):
+    if left_x_coordinate < x < right_x_coordinate:
+        if top_y_coordinate < y < bottom_y_coordinate:
+            return True
+    return False
