@@ -9,7 +9,9 @@ font = pygame.font.Font(None, 40)
 
 phase = 1
 done = False
-first_move = True
+player_count = 0
+first_round = True
+player_moves_counter = 0
 
 columns = 6
 rows = 5
@@ -63,17 +65,22 @@ while not done:
                     #print("you clicked [%d, %d]" % (cell.get_x(), cell.get_y()) + ", dir: " + repr(direction))
                     if direction != Direction.OUTSIDE:
                         if board.perform_turn(cell, direction):
-                            if not first_move:
-                                has_won, winner = board.has_won()
-                                #print(board.has_won())
-                                if has_won:
-                                    print(f"The winner is player number {winner}!")
-                                    done = True
-                                    break
-                            first_move = False
-                            board.finish_turn()
-    if phase == 1:
-        initial_screen_painter.paint_initial_screen()
+                            if not first_round:
+                                alive_players = board.alive_players()
+                                if len(alive_players) == 0:
+                                    raise ValueError("No alive players on board")
+                                elif len(alive_players) == 1:
+                                    screen.fill(pygame.Color("black"))
+                                    board_painter.draw_board(board)
+                                    phase += 1
+                                    continue
+                                else:
+                                    alive_players.sort()
+                                    PLAYER_ORDER = alive_players.copy()
+
+                            player_moves_counter += 1
+                            if player_moves_counter >= player_count:
+                                first_round = False
 
                             board.finish_turn(PLAYER_ORDER)
 

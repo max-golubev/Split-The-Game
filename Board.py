@@ -16,8 +16,8 @@ class Board:
     def get_current_player(self):
         return self.current_player
 
-    def finish_turn(self):
-        self.current_player = self.compute_next_player()
+    def finish_turn(self, player_order):
+        self.current_player = self.compute_next_player(player_order)
         return self.get_current_player()
 
     def perform_turn(self, cell: BigCell, direction: Direction):
@@ -55,14 +55,14 @@ class Board:
             result[Direction.LEFT] = self.get_big_cell(x - 1, y)
         return result
 
-    def compute_next_player(self):
+    def compute_next_player(self, player_order):
         current = self.get_current_player()
-        if current in PLAYER_ORDER:
-            index = PLAYER_ORDER.index(current)
-            if index == (len(PLAYER_ORDER) - 1):
-                return PLAYER_ORDER[0]
+        if current in player_order:
+            index = player_order.index(current)
+            if index == (len(player_order) - 1):
+                return player_order[0]
             else:
-                return PLAYER_ORDER[index + 1]
+                return player_order[index + 1]
         else:
             raise ValueError("Unknown player: " + repr(current))
 
@@ -75,14 +75,13 @@ class Board:
     def get_rows_number(self):
         return self.rows
 
-    def has_won(self):
-        winner = NOONE
+    def alive_players(self):
+        alive_players = []
         for x in range(0, self.columns):
             for y in range(0, self.rows):
-                if winner == NOONE:
-                    winner = Board.get_big_cell(self, x, y).get_big_cell_owner()
-                    continue
                 contestant = Board.get_big_cell(self, x, y).get_big_cell_owner()
-                if winner != contestant and contestant != -1:
-                    return False, NOONE
-        return True, winner
+                if contestant == NOONE:
+                    continue
+                elif contestant not in alive_players:
+                    alive_players.append(contestant)
+        return alive_players
