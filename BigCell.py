@@ -71,7 +71,7 @@ class BigCell:
                 continue
             self.set_small_cell_owner(next, NOONE)
 
-    def capture(self, player, capturing: Direction, captured_cell):
+    def capture(self, player, capturing: Direction):
         empty_directions = []
 
         for next in Direction:
@@ -86,9 +86,16 @@ class BigCell:
 
         if self.get_small_cell_owner(capturing) == NOONE:
             self.set_small_cell_owner(capturing, player)
+            return True
         else:
-            random_index = random.randint(0, len(empty_directions) - 1)
-            self.set_small_cell_owner(empty_directions[random_index], player)
+            if len(empty_directions) == 1:
+                self.set_small_cell_owner(empty_directions[0], player)
+            elif len(empty_directions) > 1:
+                random_index = random.randint(0, len(empty_directions) - 1)
+                self.set_small_cell_owner(empty_directions[random_index], player)
+            elif len(empty_directions) == 0:
+                return False
+            return True
 
     def is_full(self):
         for next in Direction:

@@ -1,8 +1,10 @@
 from BigCell import *
+import time
+import pygame
 
 
 class Board:
-    def __init__(self, width, height):
+    def __init__(self, width, height, board_painter, screen):
         self.current_player = PLAYER_1
         self.columns = width  # in-game x
         self.rows = height  # in-game y
@@ -12,6 +14,8 @@ class Board:
             self.cells[x] = column
             for y in range(0, height):
                 column[y] = BigCell(x, y, width, height)
+        self.board_painter = board_painter
+        self.screen = screen
 
     def get_current_player(self):
         return self.current_player
@@ -33,13 +37,28 @@ class Board:
         queue = [cell]
         while len(queue) > 0:
             next = queue.pop(0)
+            if not next.is_full():
+                continue
+            self.screen.fill(pygame.Color("black"))
+            self.board_painter.draw_board(self)
+            pygame.display.flip()
+            time.sleep(0.5)
+
             next.clear()
-            for next in self.neighbours(next).items():
-                dir, neighbour = next
+            for adjacent in self.neighbours(next).items():
+                dir, neighbour = adjacent
                 origin = dir.get_opposite()
-                neighbour.capture(self.current_player, origin, cell)
+                while True:
+                    if not neighbour.capture(self.current_player, origin):
+                        Board.explode(self, neighbour)
+                        continue
+                    else:
+                        break
+
                 if neighbour.is_full():
                     queue.append(neighbour)
+            if len(self.alive_players()) == 1:
+                break
 
     def neighbours(self, cell: BigCell):
         result = {}

@@ -17,6 +17,7 @@ columns = 6
 rows = 5
 board = Board.Board(columns, rows)
 board_painter = BoardPainter(columns, rows, screen, font)
+board = Board.Board(columns, rows, board_painter, screen)
 initial_screen_painter = InitialScreenPainter(screen, font)
 
 initial_screen_painter.paint_initial_screen()
@@ -27,6 +28,7 @@ while not done:
             done = True
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_x, mouse_y = event.pos
+            # Main menu
             if phase == 1:
                 if is_within(play_button_top_coord, play_button_top_coord + play_button_height,
                                                     play_button_left_coord, play_button_left_coord + play_button_width,
@@ -34,6 +36,7 @@ while not done:
                     initial_screen_painter.player_count_screen()
                     phase += 1
 
+            # Choosing player number
             if phase == 2:
                 if is_within(count_button_top_coord, count_button_top_coord + count_button_height,
                              button_left_coordinate_2, button_left_coordinate_2 + count_button_width,
@@ -59,6 +62,7 @@ while not done:
                     phase += 1
                     continue
 
+            # Actual game
             if phase == 3:
                 cell, direction = board_painter.find_position(mouse_x, mouse_y, board)
                 if cell is not None:
@@ -84,6 +88,7 @@ while not done:
 
                             board.finish_turn(PLAYER_ORDER)
 
+            # End screen
             if phase == 4:
                 screen.fill(pygame.Color("black"))
                 font = pygame.font.Font('freesansbold.ttf', 40)
@@ -91,6 +96,7 @@ while not done:
                                    PLAYER_COLORS[alive_players[0]])
                 screen.blit(text, (150, 400))
 
+    # Part of a game proces
     if phase == 3:
         screen.fill(pygame.Color("black"))
         board_painter.draw_board(board)
