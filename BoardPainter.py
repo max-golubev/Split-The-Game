@@ -50,8 +50,8 @@ class BoardPainter:
             higher_side_count = rows_number
         else:
             higher_side_count = columns_number
-        if board_height <= board_width:
-            lower_board_length = board_height
+        if (board_height - 40) <= board_width:
+            lower_board_length = board_height - 40
         else:
             lower_board_length = board_width
 
